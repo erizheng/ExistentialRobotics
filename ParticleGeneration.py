@@ -6,15 +6,18 @@ from math import *
 import scienceplots
 plt.style.use(['science', 'notebook'])
 
-def generate(mu):
+def gauss(x, mu, sigma):
+    return 1/(sigma * np.sqrt(2 * np.pi)) * np.exp( - (x - mu)**2 / (2 * sigma**2) )
+
+def generate(mu, sigma):
     #generate random variable according to specific distribution
-    bins = np.linspace(0, 3, 100)
+    # bins = np.linspace(0, 3, 100)
     # lamda = 2
     # f = (1/variance*np.sqrt(2*np.pi))*np.exp(-(1/2)((x-mean)/variance)**2)
     # F = (1/np.sqrt(2*np.pi))*np.exp(-(x**2)/2)
 
     #mu = 0 #location
-    sigma = 1 #width, how spread out, deviation
+    #sigma = 1 #width, how spread out, deviation
     x = np.random.normal(mu, sigma, 100) #array of distribution
     #x is the x coordinate value of the graph
     #probably need to do like a for loop for each x value and plug 
@@ -43,3 +46,6 @@ def generate(mu):
     count, bins, ignored = plt.hist(x, histtype= 'step', color='red', density='norm', bins=100)
     plt.plot(bins, 1/(sigma * np.sqrt(2 * np.pi)) * np.exp( - (bins - mu)**2 / (2 * sigma**2) ), linewidth=2, color='r')
     plt.show()
+
+    y = gauss(x, 0, 1)
+    return y
