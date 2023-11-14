@@ -6,14 +6,14 @@ from math import *
 import scienceplots
 plt.style.use(['science', 'notebook'])
 
-def generate():
+def generate(mu):
     #generate random variable according to specific distribution
     bins = np.linspace(0, 3, 100)
     # lamda = 2
     # f = (1/variance*np.sqrt(2*np.pi))*np.exp(-(1/2)((x-mean)/variance)**2)
     # F = (1/np.sqrt(2*np.pi))*np.exp(-(x**2)/2)
 
-    mu = 0 #location
+    #mu = 0 #location
     sigma = 1 #width, how spread out, deviation
     x = np.random.normal(mu, sigma, 100) #array of distribution
     #x is the x coordinate value of the graph
