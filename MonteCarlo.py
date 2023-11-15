@@ -52,7 +52,8 @@ def MCL(Xprev, u_t, z_t, m):
         Xnot = Xnot + [x_t, w_t] #add tuple
 
         #draw i with prob of w_t
-        plt.bar(x_t, 1, w_t)
+        #plt.figure(figsize=(10,5))
+        plt.bar(x_t, w_t, 0.5)
 
         #add x_t to X_t
         Xt.append(x_t)
@@ -66,6 +67,6 @@ def MCL(Xprev, u_t, z_t, m):
 
 #running
 
-p = [1, 2, 3, 4, 5]
-z = [1, 1, 1]
-MCL(p, 1, z, 5)
+p = np.random.randint(0, 100, size=100)
+z = [1, 1, 1] #temp values, don't know what to do with z actually
+MCL(p, 1, z, len(p))
