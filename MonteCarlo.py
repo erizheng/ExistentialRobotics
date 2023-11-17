@@ -9,6 +9,7 @@ plt.style.use(['science', 'notebook'])
 def prob_norm_dist(a, b):
     return 1/(2* np.pi *b) * np.exp( - (a)**2 / (2 * b))
 
+#try to implement gaussian here
 def samp_norm_dist(b):
     temp = 0
     for i in range(1, 12):
@@ -25,10 +26,9 @@ def obs_model(z_t, x_t, m):
     q = 1
     for k in range(len(z_t)):
         #ssomething
-        q += 1
+        q=1
 
     return random.random()
-
 
 
 
@@ -52,13 +52,12 @@ def MCL(Xprev, u_t, z_t, m):
         Xnot = Xnot + [x_t, w_t] #add tuple
 
         #draw i with prob of w_t
-        #plt.figure(figsize=(10,5))
-        plt.bar(x_t, w_t, 0.5)
+        plt.bar(x_t, w_t, 5, color='black')
 
         #add x_t to X_t
         Xt.append(x_t)
         
-
+    plt.ylim(top = 2)    
     plt.show()
 
     return Xt
@@ -67,6 +66,6 @@ def MCL(Xprev, u_t, z_t, m):
 
 #running
 
-p = np.random.randint(0, 100, size=100)
+p = np.random.randint(0, 1000, size=100)
 z = [1, 1, 1] #temp values, don't know what to do with z actually
 MCL(p, 1, z, len(p))
