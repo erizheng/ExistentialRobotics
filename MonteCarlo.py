@@ -27,16 +27,16 @@ def motion_model(u_t, x_prev):
 
 
 #max senor range, 1 units?
-z_max = 10
+z_max = 100
 #variance
-sig = 0.4
+sig = 4 #normalized variance, max is 1
 #assume correspondence is known
 num_landmarks = 3
 
-z_hit = 0.5
-z_short = 0.1
-z_rand = 0.1
-landmark = [0, 1, 2]
+z_hit = 93
+z_short = 1
+z_rand = 1
+landmark = [0, 5, 20]
 
 #z_m, measured distance from sensor
 #z_expect, expected distance from particle position x_t
@@ -47,18 +47,22 @@ def p_hit(z_measured, x_t, k):
     z_expect = abs(landmark[k] - x_t)
     N = (prob_norm_dist(z_measured, z_expect, sig**2))
     #n= samp_norm_dist(sig**2)
-    if(z_measured >= 0 & z_measured <= z_max):
+    if(z_measured >= 0 and z_measured <= z_max):
         return N
     else:
         return 0
     
 #random item in way
 def p_short(z_measured, x_t, k):
-    lamda = 0.4
+    lamda = 1
     z_expect = abs(landmark[k] - x_t)
+
+    if(z_expect == 0 or z_measured == 0):
+        return 0
+    
     n = 1/(1- np.exp(-lamda * z_expect))
     
-    if(z_measured >= 0 & z_measured <= z_expect):
+    if(z_measured >= 0 and z_measured <= z_expect):
         return n*lamda * np.exp(-lamda*z_measured)
     else:
         return 0
@@ -72,11 +76,11 @@ def p_max(z):
 
 #random noise
 def p_rand(z):
-    if(z >= 0 & z< z_max):
+    if(z >= 0 and z< z_max):
         return (1/z_max)
     else:
         return 0
-
+    
 
 #landmarks, array location of landmarks
 #z_t, relative location given by sensor
@@ -87,10 +91,16 @@ def obs_model(z_t, x_t, landmarks):
     #for each known location of landmark with index k
     for k in range(0, len(landmarks)):
         p = (z_hit * p_hit(z_t[k], x_t, k)) + (z_short * p_short(z_t[k], x_t, k)) + (z_max * p_max(z_t[k])) + (z_rand * p_rand(z_t[k]))
-        #p = p_hit(z_t[k], x_t, k) * p_short(z_t[k], x_t, k) * p_max(z_t[k])* p_rand(z_t[k])
+        #p = p_hit(z_t[k], x_t, k) + p_short(z_t[k], x_t, k) + p_max(z_t[k]) + p_rand(z_t[k])
+
+        #measured = z_t[k]
+        #expected = abs(landmarks[k] - x_t)
+        #p = prob_norm_dist(measured, expected, sig**2)
+
+
         q= q*p
 
-    return random.random()
+    return q
 
 
 
@@ -116,7 +126,7 @@ def MCL(Xprev, u_t, z_t, m):
         Xnot = Xnot + [x_t, w_t] #add tuple
 
         #draw i with prob of w_t
-        plt.bar(x_t, w_t, 5, color='black')
+        plt.bar(x_t, w_t, 0.5, color='black')
 
         #add x_t to X_t
         Xt.append(x_t)
@@ -129,7 +139,6 @@ def MCL(Xprev, u_t, z_t, m):
 
 
 #running
-
-p = np.random.randint(0, 1000, size=100)
-z = [1, 2, 10] #temp values, don't know what to do with z actually
-MCL(p, 1, z, len(p))
+p = np.random.randint(0, 100, size=1000)
+z = [3, 2, 17] #temp values, don't know what to do with z actually
+MCL(p, 0, z, len(p))
