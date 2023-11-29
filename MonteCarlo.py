@@ -46,9 +46,9 @@ landmark = [0, 5, 20]
 def p_hit(z_measured, x_t, k):
     z_expect = abs(landmark[k] - x_t)
     N = (prob_norm_dist(z_measured, z_expect, sig**2))
-    #n= samp_norm_dist(sig**2)
+    #n= normalize guassian
     if(z_measured >= 0 and z_measured <= z_max):
-        return N
+        return N #*n
     else:
         return 0
     
