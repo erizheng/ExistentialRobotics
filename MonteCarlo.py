@@ -1,6 +1,7 @@
 import numpy as np
 from math import *
 import random
+from sympy import var, Sum, pi, limit, oo
 import matplotlib.pyplot as plt
 import scienceplots
 plt.style.use(['science', 'notebook'])
@@ -25,7 +26,6 @@ def motion_model(u_t, x_prev):
     return x_t
 
 
-
 #max senor range, 1 units?
 z_max = 100
 #variance
@@ -33,9 +33,10 @@ sig = 4 #normalized variance, max is 1
 #assume correspondence is known
 num_landmarks = 3
 
-z_hit = 93
-z_short = 1
-z_rand = 1
+z_m = 0.2
+z_hit = 0.7
+z_short = 0.05
+z_rand = 0.05
 landmark = [0, 5, 20]
 
 #z_m, measured distance from sensor
@@ -46,9 +47,10 @@ landmark = [0, 5, 20]
 def p_hit(z_measured, x_t, k):
     z_expect = abs(landmark[k] - x_t)
     N = (prob_norm_dist(z_measured, z_expect, sig**2))
+    N2 = (prob_norm_dist(0, 0, sig**2))
     #n= normalize guassian
     if(z_measured >= 0 and z_measured <= z_max):
-        return N #*n
+        return N/N2 #*n
     else:
         return 0
     
@@ -58,7 +60,7 @@ def p_short(z_measured, x_t, k):
     z_expect = abs(landmark[k] - x_t)
 
     if(z_expect == 0 or z_measured == 0):
-        return 0
+        return 1 #or 0 idk
     
     n = 1/(1- np.exp(-lamda * z_expect))
     
@@ -68,13 +70,15 @@ def p_short(z_measured, x_t, k):
         return 0
     
 #if max sensor
+#if at max then lower probability
 def p_max(z):
     if(z == z_max):
-        return 1
-    else:
         return 0
+    else:
+        return 1
 
 #random noise
+#just some random noises
 def p_rand(z):
     if(z >= 0 and z< z_max):
         return (1/z_max)
@@ -90,7 +94,7 @@ def obs_model(z_t, x_t, landmarks):
     q = 1
     #for each known location of landmark with index k
     for k in range(0, len(landmarks)):
-        p = (z_hit * p_hit(z_t[k], x_t, k)) + (z_short * p_short(z_t[k], x_t, k)) + (z_max * p_max(z_t[k])) + (z_rand * p_rand(z_t[k]))
+        p = (z_hit * p_hit(z_t[k], x_t, k)) + (z_short * p_short(z_t[k], x_t, k)) + (z_m * p_max(z_t[k])) + (z_rand * p_rand(z_t[k]))
         #p = p_hit(z_t[k], x_t, k) + p_short(z_t[k], x_t, k) + p_max(z_t[k]) + p_rand(z_t[k])
 
         #measured = z_t[k]
