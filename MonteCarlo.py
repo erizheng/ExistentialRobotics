@@ -81,7 +81,7 @@ def p_max(z):
 #just some random noises
 def p_rand(z):
     if(z >= 0 and z< z_max):
-        return (1/z_max)
+        return (1/z)
     else:
         return 0
     
@@ -90,17 +90,11 @@ def p_rand(z):
 #z_t, relative location given by sensor
 #x_t, pos of particles
 def obs_model(z_t, x_t, landmarks):
-    #liklihood, range from 0 to 1?
     q = 1
     #for each known location of landmark with index k
     for k in range(0, len(landmarks)):
-        p = (z_hit * p_hit(z_t[k], x_t, k)) + (z_short * p_short(z_t[k], x_t, k)) + (z_m * p_max(z_t[k])) + (z_rand * p_rand(z_t[k]))
-        #p = p_hit(z_t[k], x_t, k) + p_short(z_t[k], x_t, k) + p_max(z_t[k]) + p_rand(z_t[k])
-
-        #measured = z_t[k]
-        #expected = abs(landmarks[k] - x_t)
-        #p = prob_norm_dist(measured, expected, sig**2)
-
+        p = (z_hit * p_hit(z_t[k], x_t, k)) + (z_short * p_short(z_t[k], x_t, k)) 
+        + (z_m * p_max(z_t[k])) + (z_rand * p_rand(z_t[k]))
 
         q= q*p
 
