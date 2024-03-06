@@ -16,6 +16,7 @@ class Position_vector:
         self.angle = angle
         self.time = time
 
+#v is linear velocity, and w is angular
 class Velocity_vector:
     def __init__(self, v, w, time):
         self.v = v
@@ -55,7 +56,7 @@ alpha6 = 1
 
 #based off page 97, the probability of x_t given control and x_prev
 def prob_vel_model(x_t, u_t, x_prev):
-    mew = (1/2)(((x_prev.x - x_t.x)*np.cos(x_prev.angle) + (x_prev.y - x_t.y)*np.sin(x_prev.angle))/((x_prev.y - x_t.y)*np.cos(x_prev.angle) - (x_prev.x - x_t.x)*np.sin(x_prev.angle)))
+    mew = (1/2)*(((x_prev.x - x_t.x)*np.cos(x_prev.angle) + (x_prev.y - x_t.y)*np.sin(x_prev.angle))/((x_prev.y - x_t.y)*np.cos(x_prev.angle) - (x_prev.x - x_t.x)*np.sin(x_prev.angle)))
 
     x_star = ((x_prev.x + x_t.x))/(2) + mew*(x_prev.y + x_t.y)
     y_star = ((x_prev.y + x_t.y))/(2) + mew*(x_prev.x + x_t.x)
@@ -187,7 +188,7 @@ def weighted_prob(x_t, u_t, x_prev, z_t, landmarks):
 #X_prev, set of particle with x, y, angle, and time
 #m, numbers of particles in set X_prev
 #z_t, relative location given by sensors
-def MCL(Xprev, u_t, z_t, m):
+def MonteCarlo2(Xprev, u_t, z_t, m):
     Xnot = Xt = []
     #w_t is weigthed value, a probability 
     #x_t is the position vector
@@ -208,7 +209,7 @@ def MCL(Xprev, u_t, z_t, m):
         Xnot = Xnot + [x_t, w_t] #add tuple
 
         #draw i with prob of w_t
-        plt.bar(x_t, w_t, 0.5, color='black')
+        plt.scatter(x_t.x, x_t.y, w_t, color="black", alpha=0.5)
 
         #add x_t to X_t
         Xt.append(x_t)
