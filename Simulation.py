@@ -75,6 +75,12 @@ while(1):
                 p.setJointMotorControl2(car, joint, p.VELOCITY_CONTROL,
                                         targetVelocity = targetVel,
                                         force = maxForce)
+            p.setJointMotorControl2(car, 7, p.VELOCITY_CONTROL,
+                                        targetVelocity = targetVel,
+                                        force = maxForce)
+            p.setJointMotorControl2(car, 5, p.VELOCITY_CONTROL,
+                                        targetVelocity = targetVel,
+                                        force = maxForce)
             p.stepSimulation()
             
         if (k == p.B3G_UP_ARROW and (v & p.KEY_WAS_RELEASED)):
@@ -90,6 +96,13 @@ while(1):
                 p.setJointMotorControl2(car, joint, p.VELOCITY_CONTROL,
                                         targetVelocity = -targetVel,
                                         force = maxForce)
+            p.setJointMotorControl2(car, 7, p.VELOCITY_CONTROL,
+                                        targetVelocity = -targetVel,
+                                        force = maxForce)
+            p.setJointMotorControl2(car, 5, p.VELOCITY_CONTROL,
+                                        targetVelocity = -targetVel,
+                                        force = maxForce)
+            
             p.stepSimulation()
 
         if (k == p.B3G_DOWN_ARROW and (v & p.KEY_WAS_RELEASED)):
@@ -130,6 +143,12 @@ while(1):
                 p.setJointMotorControl2(car, joint, p.VELOCITY_CONTROL,
                                         targetVelocity = Vel,
                                         force = maxForce)
+            p.setJointMotorControl2(car, 6, p.POSITION_CONTROL,
+                                        targetPosition = 0,
+                                        force = maxForce)
+            p.setJointMotorControl2(car, 4, p.POSITION_CONTROL,
+                                        targetPosition = 0,
+                                        force = maxForce)
             p.stepSimulation()
 
         if(k == p.B3G_RIGHT_ARROW and (v & p.KEY_IS_DOWN)):
@@ -159,6 +178,13 @@ while(1):
                 p.setJointMotorControl2(car, joint, p.VELOCITY_CONTROL,
                                         targetVelocity = Vel,
                                         force = maxForce)
+            p.setJointMotorControl2(car, 6, p.POSITION_CONTROL,
+                                        targetPosition = 0,
+                                        force = maxForce)
+            p.setJointMotorControl2(car, 4, p.POSITION_CONTROL,
+                                        targetPosition = 0,
+                                        force = maxForce)
+            
             p.stepSimulation()
         
 
