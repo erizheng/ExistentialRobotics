@@ -218,7 +218,7 @@ while(1):
             
             p.stepSimulation()
         
-    #get control
+    #get controls done to apply to particles
     curVel = p.getBaseVelocity(car)
     #This returns a list of two vector3 values (3 floats in a list) 
     #representing the linear velocity [x,y,z] and angular velocity 
@@ -227,12 +227,13 @@ while(1):
     angVel = curVel[1][2]
     control = Velocity_vector(linVel,angVel,t)
     
-    print(control.w)
+    #print(control.w)
 
     #X_prev, set of particle with each with x, y, angle, and time
     #u_t, velocity vector that is controled by user for now
     #z_t, relative location given by sensors
     #m, numbers of particles in set X_prev
-    #particles = MonteCarlo2(X_prev=particles, u_t= control, z_t=correspondence, m=numParticle)
+
+    #particles = MonteCarlo2(X_prev=particles, u_t= control, z_t=, m=numParticle)
 
     time.sleep(.01)

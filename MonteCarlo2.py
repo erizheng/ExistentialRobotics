@@ -119,6 +119,8 @@ def prob_norm_dist(a, b, c):
     return 1/(2* np.pi *c) * np.exp( - (a-b)**2 / (2 * c))
 
 #guassian
+#this def needs to be fixed
+#landmark is unknown and is given by the simulation
 def p_hit(z_measured, x_t, k):
     #x1, y1 will be landmarks
     z_expect = distance(landmark[k].x, x_t.x, landmark[k].y, x_t.y)
@@ -182,6 +184,7 @@ def measure_model(z_t, x_t, landmarks):
 
 
 #combines the probability of the motion model with the measurement model
+#consider adding in condition where prob is 0 if particle goes outside of border or into obstable area
 def weighted_prob(x_t, u_t, x_prev, z_t, landmarks):
     return prob_vel_model(x_t, u_t, x_prev) * measure_model(z_t, x_t, landmarks)
 
@@ -190,6 +193,8 @@ def weighted_prob(x_t, u_t, x_prev, z_t, landmarks):
 #z_t, relative location given by sensors
 def MonteCarlo2(Xprev, u_t, z_t, m):
     Xnot = Xt = []
+
+    #initiate variables
     #w_t is weigthed value, a probability 
     #x_t is the position vector
     x_t = Position_vector(0,0,0,0)
@@ -206,9 +211,10 @@ def MonteCarlo2(Xprev, u_t, z_t, m):
         #w_t, weight/probability of x_t
         w_t = weighted_prob(x_t, u_t, Xprev[i], z_t, i, landmark)
 
-        Xnot = Xnot + [x_t, w_t] #add tuple
+        #Xnot = Xnot + [x_t, w_t] #add tuple
 
         #draw i with prob of w_t
+        #w_t is radius, larger it is the more probable
         plt.scatter(x_t.x, x_t.y, w_t, color="black", alpha=0.5)
 
         #add x_t to X_t
