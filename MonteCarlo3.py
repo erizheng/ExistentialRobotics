@@ -6,16 +6,23 @@ from ipywidgets import Button, HBox, VBox, Output
 from IPython.display import display, Javascript, clear_output
 import matplotlib.animation as ani
 #from google.colab import output
-import time
-import keyboard
+import sys
 
 
 
 def handle_key_event(key):
     pf.MCL(key)
 
-class MCPF:
+def on_press(event):
+    print('press', event.key)
+    sys.stdout.flush()
+    handle_key_event(event.key)
+    # if event.key == 'x':
+    #     visible = xl.get_visible()
+    #     xl.set_visible(not visible)
+    #     fig.canvas.draw()
 
+class MCPF:
     def __init__(self, map, num_part):
 
         self.measure_noise = 10
@@ -26,21 +33,23 @@ class MCPF:
         self.robot_x = 330
         self.robot_y = 230
         self.landmarks = [[235, 100], [420, 150]]
-        #particles [[x,y,w], ...]
-        self.particles = [[0,0,0]]
         self.num_particles = num_part
 
         #plotting
         self.fig, self.ax = plt.subplots()
+        self.fig.canvas.mpl_connect('key_press_event', on_press)
         self.ax.imshow(map)
         
         #plot without the particles
         self.scatter = self.ax.scatter(self.robot_x, self.robot_y, color= "black", marker= "s", s= 500)
-        plt.axis("off")
-        plt.show()
+        # plt.axis("off")
+        
 
         self.generate_part()
         self.draw_robot("Initial")
+
+        print('setup done')
+        sys.stdout.flush()
 
     def calc_dist(self):
         #measured_dist is an array
@@ -63,17 +72,14 @@ class MCPF:
 
         return difference
 
-    #a is mean, b is sigma^2
-    def prob_norm(a,b):
-        return 1/(np.sqrt(2*np.pi *b)) * np.exp(-(a**2)/2*b)
 
-    def update(self):
-        weight = self.calc_dist()
-        w = self.prob_norm(weight, self.std^2)
+    def calc_weight(self):
+        weights = self.calc_dist()
+        w = np.exp(-(weights - 0) ** 2 / (2 * (self.std ** 2))) / (self.std * np.sqrt(2 * np.pi))
 
         #multiply all the weights for each landmark
         final_w = 1
-        for i in self.landmarks:
+        for i in range(len(self.landmarks)):
             final_w = final_w * w[i]
 
         #normalize with landmarks
@@ -100,7 +106,9 @@ class MCPF:
         if event == 'up':
             self.robot_y -= self.step_size
 
+        #self.ax.imshow(self.map)
         self.scatter.set_offsets([(self.robot_x, self.robot_y)]) 
+        #self.fig.canvas.draw()
 
     #particle generation
     def generate_part(self):
@@ -111,19 +119,24 @@ class MCPF:
 
         #draws on map
         self.scatter_particles = self.ax.scatter(self.particles[:,0], self.particles[:,1], color="red", marker="o", s=self.particles[:,2] * 500)
+        #self.fig.canvas.draw()
     
     #drawing
     def draw_robot(self, stage = ""):
         clear_output(wait = True)
-        self.fig, self.az = plt.subplots()
+        #self.fig, self.az = plt.subplots()
+        #self.ax.imshow(self.map)
+        plt.cla()
         self.ax.imshow(self.map)
         self.scatter = self.ax.scatter(self.robot_x, self.robot_y, color= "black", marker= "s", s= 500)
         self.scatter_part = self.ax.scatter(self.particles[:,0], self.particles[:,1], c = self.particles[:,2], cmap = cm.jet, marker = "o", s= 500/ self.num_particles)
-        plt.axis('off')
-        plt.title(stage)
+        #plt.axis('off')
+        #plt.title(stage)
         # plt.draw()
-        plt.close()
-        plt.show()
+        #plt.close()
+        #plt.show()
+
+        #self.fig.canvas.draw()
 
     
     def prediction(self, event):
@@ -141,13 +154,14 @@ class MCPF:
 
         # updates position of robot on plot of map
         self.scatter_particles.set_offsets(self.particles)
+        #self.fig.canvas.draw()
 
         #clear_output()
         self.draw_robot("Prediction Step")
-        plt.pause(0.1)
+        #plt.pause(0.1)
 
         # perform update step after prediction step
-        self.update()
+        self.calc_weight()
 
         # perform resampling after update step
         self.resampling()
@@ -166,8 +180,8 @@ class MCPF:
         self.scatter_particles.set_offsets(self.particles)
 
         #clear_output()
-        self.draw_robot_plot("Resampling Step")
-        plt.pause(0.1)
+        self.draw_robot("Resampling Step")
+        #plt.pause(0.1)
         
     #the top level controller for this program
     def MCL(self, key):
@@ -180,18 +194,18 @@ class MCPF:
         elif key in ['ArrowUp', 'w']:
             self.robot_move('up')
             self.prediction('up')
-        elif key in ['ArrowDown', 's']:
+        elif key in ['ArrowDown', 'x']:
             self.robot_move('down')
             self.prediction('down')
+        self.fig.canvas.draw()
 
 
 img = mpimg.imread('grid_map.png')
 pf = MCPF(img, 50)
 #pf.init_js_event()
-while 1:
-    k = keyboard.wait()
-    handle_key_event(k)
-    print(k)
+
+
+plt.show()
         
     
     
